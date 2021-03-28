@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Todo;
 use Illuminate\Http\Request;
 
+
 class TodoController extends Controller
 {
     /**
@@ -12,9 +13,11 @@ class TodoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    //  GET TO-DOS BY THE LATEST ONE ORDER
     public function index()
     {
-        //
+        return Todo::latest() -> get();
     }
 
     /**
@@ -33,9 +36,21 @@ class TodoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+    // CREATE NEW TODO :)
     public function store(Request $request)
     {
-        //
+        // Validate request
+        $this->validate($request,
+            [
+                'title' => 'required'
+            ],
+            [
+                'title.required' => 'Hey, write something!'
+            ]
+        );
+
+        Todo::create($request -> all());
     }
 
     /**

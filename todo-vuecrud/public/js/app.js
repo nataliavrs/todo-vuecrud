@@ -1928,23 +1928,49 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      todos: '',
       form: new Form({
         title: ''
       })
     };
   },
   methods: {
+    // Get to-dos from database
+    getTodos: function getTodos() {
+      var _this = this;
+
+      axios.get('/api/todo').then(function (response) {
+        _this.todos = response.data;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    // Create to-do
     saveData: function saveData() {
+      var _this2 = this;
+
       var data = new FormData();
       data.append('title', this.form.title);
-      console.log(data);
+      axios.post('/api/todo', data).then(function (response) {
+        // Form.js method: clears input field
+        _this2.form.reset(); // If our call is succesful fetch all from DB again
+
+
+        _this2.getTodos();
+      })["catch"](function (error) {
+        _this2.form.errors.record(error.response.data.errors);
+      });
     }
   },
   mounted: function mounted() {
-    console.log('To-do component :)');
+    this.getTodos();
   }
 });
 
@@ -37649,6 +37675,14 @@ var render = function() {
           _vm._m(0)
         ])
       ]
+    ),
+    _vm._v(" "),
+    _c(
+      "ul",
+      _vm._l(_vm.todos, function(todo) {
+        return _c("li", { key: todo.id }, [_vm._v(_vm._s(todo.title))])
+      }),
+      0
     )
   ])
 }
