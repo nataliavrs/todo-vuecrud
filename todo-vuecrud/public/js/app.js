@@ -1932,6 +1932,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -37660,9 +37670,13 @@ var render = function() {
               }
             ],
             staticClass: "form-control form-control-lg",
+            class: { "is-invalid": _vm.form.errors.has("title") },
             attrs: { type: "text" },
             domProps: { value: _vm.form.title },
             on: {
+              keydown: function($event) {
+                return _vm.form.errors.clear("title")
+              },
               input: function($event) {
                 if ($event.target.composing) {
                   return
@@ -37673,7 +37687,14 @@ var render = function() {
           }),
           _vm._v(" "),
           _vm._m(0)
-        ])
+        ]),
+        _vm._v(" "),
+        _vm.form.errors.has("title")
+          ? _c("span", {
+              staticClass: "text-danger pt-3",
+              domProps: { textContent: _vm._s(_vm.form.errors.get("title")) }
+            })
+          : _vm._e()
       ]
     ),
     _vm._v(" "),

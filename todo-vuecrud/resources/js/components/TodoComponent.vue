@@ -8,13 +8,23 @@
                     type="text" 
                     class="form-control form-control-lg"
                     v-model="form.title"
+                    :class="{'is-invalid' : form.errors.has('title')}"
+                    @keydown="form.errors.clear('title')"
                 >
                 <div class="input-group-append">
                     <button class="btn btn-success" type="submit">Add this your list</button>
                 </div>
             </div>
+
+            <!-- Error window -->
+            <span 
+                class="text-danger pt-3"
+                v-if="form.errors.has('title')"
+                v-text="form.errors.get('title')"
+            >
+            </span>
         </form>
-        
+                
         <!-- To-dos -->
         <ul>
             <li v-for="todo in todos" :key="todo.id">{{todo.title}}</li>
