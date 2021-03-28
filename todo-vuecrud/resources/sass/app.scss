@@ -6,3 +6,9 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+
+body {
+    width: 100vw;
+    height: 100vh;
+    background-color: pink;
+}

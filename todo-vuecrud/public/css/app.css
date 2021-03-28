@@ -10942,3 +10942,9 @@ a.text-dark:focus {
   }
 }
 
+body {
+  width: 100vw;
+  height: 100vh;
+  background-color: pink;
+}
+
