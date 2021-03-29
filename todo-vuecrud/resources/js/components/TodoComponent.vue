@@ -26,8 +26,29 @@
         </form>
                 
         <!-- To-dos -->
-        <ul>
-            <li v-for="todo in todos" :key="todo.id">{{todo.title}}</li>
+        <ul style="list-style: none;">
+            <li 
+                class="bg-light"
+                style="background-color: white; margin: 3px;"
+                v-for="todo in todos" 
+                :key="todo.id"                 
+            >                
+                <i  
+                    class="far fa-square"
+                    v-on:click="toggleTodo(todo)"
+                    v-if="todo.completed == false" 
+                >
+                </i>
+                 <i  
+                    class="far fa-check-square"
+                    v-on:click="toggleTodo(todo)"
+                    v-if="todo.completed == true" 
+                >
+                </i>
+                {{todo.title}}
+                <i class="fas fa-trash"></i>
+                <i class="far fa-edit"></i>
+            </li>
         </ul>
     </div>
 </template>
@@ -43,6 +64,24 @@
             }
         },
         methods: {
+            // Toggle check to-do
+            toggleTodo(todo) {     
+                // Toggle checkbox icon @ click
+                todo.completed = !todo.completed           
+                // Update to-do checked value in the database
+                let data = new FormData();
+                data.append('_method', 'PATCH');
+                if (todo.completed == true) {
+                    data.append('completed', 1)
+                } 
+                if (todo.completed == false) {
+                    data.append('completed', 0)
+                    console.log(data);
+                }
+                // Send request to database
+                axios.post('/api/todo/'+todo.id, data)
+                
+            },
             // Get to-dos from database
             getTodos() {
                 axios.get('/api/todo')

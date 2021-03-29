@@ -1942,6 +1942,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -1952,6 +1973,26 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
+    // Toggle check to-do
+    toggleTodo: function toggleTodo(todo) {
+      // Toggle checkbox icon @ click
+      todo.completed = !todo.completed; // Update to-do checked value in the database
+
+      var data = new FormData();
+      data.append('_method', 'PATCH');
+
+      if (todo.completed == true) {
+        data.append('completed', 1);
+      }
+
+      if (todo.completed == false) {
+        data.append('completed', 0);
+        console.log(data);
+      } // Send request to database
+
+
+      axios.post('/api/todo/' + todo.id, data);
+    },
     // Get to-dos from database
     getTodos: function getTodos() {
       var _this = this;
@@ -37700,8 +37741,43 @@ var render = function() {
     _vm._v(" "),
     _c(
       "ul",
+      { staticStyle: { "list-style": "none" } },
       _vm._l(_vm.todos, function(todo) {
-        return _c("li", { key: todo.id }, [_vm._v(_vm._s(todo.title))])
+        return _c(
+          "li",
+          {
+            key: todo.id,
+            staticClass: "bg-light",
+            staticStyle: { "background-color": "white", margin: "3px" }
+          },
+          [
+            todo.completed == false
+              ? _c("i", {
+                  staticClass: "far fa-square",
+                  on: {
+                    click: function($event) {
+                      return _vm.toggleTodo(todo)
+                    }
+                  }
+                })
+              : _vm._e(),
+            _vm._v(" "),
+            todo.completed == true
+              ? _c("i", {
+                  staticClass: "far fa-check-square",
+                  on: {
+                    click: function($event) {
+                      return _vm.toggleTodo(todo)
+                    }
+                  }
+                })
+              : _vm._e(),
+            _vm._v("\n            " + _vm._s(todo.title) + "\n            "),
+            _c("i", { staticClass: "fas fa-trash" }),
+            _vm._v(" "),
+            _c("i", { staticClass: "far fa-edit" })
+          ]
+        )
       }),
       0
     )

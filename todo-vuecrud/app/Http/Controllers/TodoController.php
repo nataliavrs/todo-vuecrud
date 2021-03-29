@@ -37,7 +37,7 @@ class TodoController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    // CREATE NEW TODO :)
+    // Create new todo
     public function store(Request $request)
     {
         // Validate request
@@ -72,7 +72,7 @@ class TodoController extends Controller
      */
     public function edit(Todo $todo)
     {
-        //
+       
     }
 
     /**
@@ -82,9 +82,13 @@ class TodoController extends Controller
      * @param  \App\Todo  $todo
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Todo $todo)
-    {
-        //
+
+    //  Toggle to-do completed
+    public function update(Request $request, $id)
+    {   
+        $todo = Todo::findOrFail($id);
+        $todo -> update($request -> all());;
+        $todo -> save();        
     }
 
     /**
