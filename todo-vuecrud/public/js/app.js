@@ -1963,13 +1963,53 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      // Toggle edit icon
+      editmode: false,
       todos: '',
       form: new Form({
         title: ''
-      })
+      }),
+      // Error
+      error: false
     };
   },
   methods: {
@@ -1987,7 +2027,6 @@ __webpack_require__.r(__webpack_exports__);
 
       if (todo.completed == false) {
         data.append('completed', 0);
-        console.log(data);
       } // Send request to database
 
 
@@ -2018,8 +2057,40 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"](function (error) {
         _this2.form.errors.record(error.response.data.errors);
       });
+    },
+    // Edit title
+    updateTodo: function updateTodo(todo) {
+      // Input disappears
+      if (todo.title != '') {
+        this.editmode = false; // Update to-do title in database
+
+        var data = new FormData();
+        data.append('_method', 'PATCH');
+        data.append('title', todo.title); // Send request to database
+
+        axios.post('/api/todo/' + todo.id, data).then(function () {})["catch"](function (error) {
+          console.log(error);
+        });
+      } else {
+        this.error = 'error';
+      }
+    },
+    deleteTodo: function deleteTodo(todo) {
+      var _this3 = this;
+
+      // Update to-do checked value in the database
+      var data = new FormData();
+      data.append('_method', 'DELETE'); // Send request to database
+
+      axios.post('/api/todo/' + todo.id, data).then(function (answer) {
+        // Show all to-dos list updated
+        _this3.todos = answer.data;
+      })["catch"](function (error) {
+        _this3.form.errors.record(error.response.data.errors);
+      });
     }
   },
+  // Show all to-dos when page is loaded
   mounted: function mounted() {
     this.getTodos();
   }
@@ -37753,7 +37824,7 @@ var render = function() {
           [
             todo.completed == false
               ? _c("i", {
-                  staticClass: "far fa-square",
+                  staticClass: "far fa-square text-danger",
                   on: {
                     click: function($event) {
                       return _vm.toggleTodo(todo)
@@ -37764,7 +37835,7 @@ var render = function() {
             _vm._v(" "),
             todo.completed == true
               ? _c("i", {
-                  staticClass: "far fa-check-square",
+                  staticClass: "far fa-check-square text-success",
                   on: {
                     click: function($event) {
                       return _vm.toggleTodo(todo)
@@ -37772,10 +37843,80 @@ var render = function() {
                   }
                 })
               : _vm._e(),
-            _vm._v("\n            " + _vm._s(todo.title) + "\n            "),
-            _c("i", { staticClass: "fas fa-trash" }),
             _vm._v(" "),
-            _c("i", { staticClass: "far fa-edit" })
+            _c("div", [
+              _vm.editmode != todo.id || _vm.editmode == false
+                ? _c("span", [
+                    _vm._v(
+                      "\n                    " +
+                        _vm._s(todo.title) +
+                        "\n                "
+                    )
+                  ])
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.editmode == todo.id
+                ? _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: todo.title,
+                        expression: "todo.title"
+                      }
+                    ],
+                    attrs: { type: "text" },
+                    domProps: { value: todo.title },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(todo, "title", $event.target.value)
+                      }
+                    }
+                  })
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.error != false
+                ? _c("span", { staticClass: "text-danger pt-3" }, [
+                    _vm._v(
+                      "\n                    Sorry, invalid title.\n                "
+                    )
+                  ])
+                : _vm._e()
+            ]),
+            _vm._v(" "),
+            _c("i", {
+              staticClass: "fas fa-trash",
+              on: {
+                click: function($event) {
+                  return _vm.deleteTodo(todo)
+                }
+              }
+            }),
+            _vm._v(" "),
+            _vm.editmode != todo.id
+              ? _c("i", {
+                  staticClass: "far fa-edit",
+                  on: {
+                    click: function($event) {
+                      _vm.editmode = todo.id
+                    }
+                  }
+                })
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.editmode == todo.id
+              ? _c("i", {
+                  staticClass: "fas fa-save",
+                  on: {
+                    click: function($event) {
+                      return _vm.updateTodo(todo)
+                    }
+                  }
+                })
+              : _vm._e()
           ]
         )
       }),

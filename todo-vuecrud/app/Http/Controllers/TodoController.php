@@ -83,12 +83,12 @@ class TodoController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    //  Toggle to-do completed
+    // Update to-do columns
     public function update(Request $request, $id)
     {   
         $todo = Todo::findOrFail($id);
         $todo -> update($request -> all());;
-        $todo -> save();        
+        $todo -> save();
     }
 
     /**
@@ -97,8 +97,10 @@ class TodoController extends Controller
      * @param  \App\Todo  $todo
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Todo $todo)
+    public function destroy($id)
     {
-        //
+        $todo = Todo::findOrFail($id);
+        $todo -> delete();
+        return Todo::latest() -> get();
     }
 }

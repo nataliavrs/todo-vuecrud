@@ -34,20 +34,56 @@
                 :key="todo.id"                 
             >                
                 <i  
-                    class="far fa-square"
+                    class="far fa-square text-danger"
                     v-on:click="toggleTodo(todo)"
                     v-if="todo.completed == false" 
                 >
                 </i>
                  <i  
-                    class="far fa-check-square"
+                    class="far fa-check-square text-success"
                     v-on:click="toggleTodo(todo)"
                     v-if="todo.completed == true" 
                 >
                 </i>
-                {{todo.title}}
-                <i class="fas fa-trash"></i>
-                <i class="far fa-edit"></i>
+                
+                <!-- To-do title -->
+                <div>
+                    <span v-if="editmode != todo.id || editmode == false">
+                        {{todo.title}}
+                    </span>
+                    <input 
+                        type="text"
+                        v-model="todo.title"
+                        v-if="editmode == todo.id"
+                    >
+                    <!-- Error window -->
+                    <span 
+                        class="text-danger pt-3"
+                        v-if="error != false"
+                    >
+                        Sorry, invalid title.
+                    </span>
+                </div>
+
+                <i 
+                    class="fas fa-trash"
+                    v-on:click="deleteTodo(todo)"
+                >
+                </i>
+                <!-- Edit title -->
+                <i 
+                    class="far fa-edit"
+                    v-on:click="editmode = todo.id"
+                    v-if="editmode != todo.id"
+                >
+                </i>
+                <!-- Save edited title -->
+                <i 
+                    class="fas fa-save"
+                    v-on:click="updateTodo(todo)"
+                    v-if="editmode == todo.id"
+                >
+                </i>
             </li>
         </ul>
     </div>
@@ -57,10 +93,14 @@
     export default {
         data() {
             return {
+                // Toggle edit icon
+                editmode: false,
                 todos: '',
                 form: new Form({
                     title: ''
-                })
+                }),
+                // Error
+                error: false,
             }
         },
         methods: {
@@ -76,11 +116,9 @@
                 } 
                 if (todo.completed == false) {
                     data.append('completed', 0)
-                    console.log(data);
                 }
                 // Send request to database
-                axios.post('/api/todo/'+todo.id, data)
-                
+                axios.post('/api/todo/'+todo.id, data)                
             },
             // Get to-dos from database
             getTodos() {
@@ -104,8 +142,42 @@
                 }).catch((error) => {
                     this.form.errors.record(error.response.data.errors)
                 })                
-            }
+            },
+            // Edit title
+            updateTodo(todo) {
+                // Input disappears
+                if (todo.title != '') {
+                    this.editmode = false;
+         
+                    // Update to-do title in database
+                    let data = new FormData();
+                    data.append('_method', 'PATCH');                
+                    data.append('title', todo.title);
+                    
+                    // Send request to database
+                    axios.post('/api/todo/'+todo.id, data)
+                    .then(() => {}).catch((error) => {
+                        console.log(error);              
+                    })
+                } else {
+                   this.error = 'error'
+                }                
+            },
+            deleteTodo(todo) {    
+                // Update to-do checked value in the database
+                let data = new FormData();
+                data.append('_method', 'DELETE');                                 
+                // Send request to database
+                axios.post('/api/todo/'+todo.id, data)
+                .then((answer) => {
+                    // Show all to-dos list updated
+                    this.todos = answer.data;
+                }).catch((error) => {
+                    this.form.errors.record(error.response.data.errors)
+                })  
+            },
         },
+        // Show all to-dos when page is loaded
         mounted() {
             this.getTodos()
         }
